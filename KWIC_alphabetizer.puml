@@ -1,0 +1,43 @@
+@startuml
+-> Alphabetizer: update(resultStorage, lineStorageChangeEvent)
+activate Alphabetizer
+
+Alphabetizer -> LineStorageChangeEvent: getEventType()
+activate LineStorageChangeEvent
+LineStorageChangeEvent --> Alphabetizer: ADD
+deactivate LineStorageChangeEvent
+Alphabetizer -> LineStorageChangeEvent: getChangedLine()
+activate LineStorageChangeEvent
+LineStorageChangeEvent --> Alphabetizer: lineNumber
+deactivate LineStorageChangeEvent
+
+Alphabetizer -> resultStorage: get(lineNumber)
+activate resultStorage
+resultStorage --> Alphabetizer: line
+deactivate resultStorage
+
+Alphabetizer -> Line: capitalizeFirstWord()
+activate Line
+Line --> Alphabetizer
+deactivate Line
+
+Alphabetizer -> Alphabetizer: alphabetize(storage, line, lineNumber)
+
+activate Alphabetizer
+loop for line before current line
+    Alphabetizer -> resultStorage: insert(i, line)
+    activate resultStorage
+    resultStorage --> Alphabetizer
+    deactivate resultStorage
+    Alphabetizer -> resultStorage: delete(lineNumber + 1)
+    activate resultStorage
+    resultStorage --> Alphabetizer
+    deactivate resultStorage
+end
+
+Alphabetizer --> Alphabetizer
+deactivate Alphabetizer
+
+<-- Alphabetizer
+deactivate Alphabetizer
+@enduml

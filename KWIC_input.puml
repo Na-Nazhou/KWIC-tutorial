@@ -1,0 +1,65 @@
+@startuml
+
+activate MainView
+
+MainView -> UiController: generateResult()
+activate UiController
+
+UiController -> MainView: getIgnoredWords()
+MainView --> UiController: ignoredWordsSet
+
+UiController -> MainView: getInput()
+MainView --> UiController: input
+
+UiController -> MasterControl: run(input, ignoredWordsSet)
+activate MasterControl
+
+MasterControl -> rawInputLines: clearLines()
+activate rawInputLines
+rawInputLines --> MasterControl
+deactivate rawInputLines
+
+MasterControl -> resultLines: clearLines()
+activate resultLines
+resultLines --> MasterControl
+deactivate resultLines
+
+MasterControl -> MasterControl: transformSetToLowercase(ignoredWords)
+activate MasterControl
+MasterControl --> MasterControl: lowerCaseIgnoredWords
+deactivate MasterControl
+
+MasterControl -> CircularShifter: setIgnoreWords(lowerCaseIgnoredWords)
+activate CircularShifter
+CircularShifter --> MasterControl
+deactivate CircularShifter
+
+loop for line in input
+    MasterControl -> rawInputLines: addLine(line)
+    activate rawInputLines
+
+    rawInputLines -> rawInputLines: notifyObservers
+    activate rawInputLines
+    rawInputLines --> rawInputLines
+    deactivate rawInputLines
+
+    rawInputLines --> MasterControl
+    deactivate rawInputLines
+end
+
+MasterControl -> resultLines: getAll()
+activate resultLines
+resultLines --> MasterControl: result
+deactivate resultLines
+
+MasterControl --> UiController: result
+deactivate MasterControl
+
+UiController -> MainView: setResults(result)
+MainView --> UiController
+UiController --> MainView
+deactivate UiController
+
+deactivate MainView
+
+@enduml

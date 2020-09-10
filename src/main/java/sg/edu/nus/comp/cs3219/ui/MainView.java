@@ -43,6 +43,7 @@ public class MainView extends JFrame implements KwicUi {
 		super("Key Word In Context");
 		add(createAndAddComponents());
 		attachButtonEvents();
+
 		pack();
 		setResizable(false);
 		setLocationRelativeTo(null);
