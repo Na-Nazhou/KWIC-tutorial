@@ -1,0 +1,43 @@
+@startuml
+-> CircularShifter: update(rawInputLines, lineStorageChangeEvent)
+activate CircularShifter
+
+CircularShifter -> LineStorageChangeEvent: getEventType()
+activate LineStorageChangeEvent
+LineStorageChangeEvent --> CircularShifter: ADD
+deactivate LineStorageChangeEvent
+CircularShifter -> LineStorageChangeEvent: getChangedLine()
+activate LineStorageChangeEvent
+LineStorageChangeEvent --> CircularShifter: lineNumber
+deactivate LineStorageChangeEvent
+
+CircularShifter -> rawInputLines: get(lineNumber)
+activate rawInputLines
+rawInputLines --> CircularShifter: line
+deactivate rawInputLines
+
+CircularShifter -> CircularShifter: makeIgnoreWordsLowercase(line)
+activate CircularShifter
+CircularShifter --> CircularShifter
+deactivate CircularShifter
+
+CircularShifter -> CircularShifter: doShift(line)
+activate CircularShifter
+loop for word in line
+    CircularShifter -> resultStorage: addLine(newLine)
+    activate resultStorage
+    resultStorage -> resultStorage: notifyObservers
+    activate resultStorage
+    resultStorage --> resultStorage
+    deactivate resultStorage
+    resultStorage --> CircularShifter
+    deactivate resultStorage
+end
+
+CircularShifter --> CircularShifter
+
+deactivate CircularShifter
+<-- CircularShifter
+deactivate CircularShifter
+
+@enduml
